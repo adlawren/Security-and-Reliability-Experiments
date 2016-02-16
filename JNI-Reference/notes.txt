@@ -7,3 +7,7 @@ Issues:
   - Renamed the source C file argument to 'lib_binsearch.c'
 - Had to alter 'lib_binsearch.c' file in the following way:
   - Added additional include for the 'stdlib.h' header
+
+In order to ensure that the export command alters in environment variable in the proper shell (the shell wherein the compile.sh script is executed), make sure to run the script using 'source', ie.:
+
+>source compile.sh
