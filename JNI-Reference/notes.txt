@@ -1,0 +1,9 @@
+Issues:
+
+- Had to alter compilation script in the following way:
+  - Put the gcc inputs on the same line
+  - Change 'javah Backup' to 'javah MyBinarySearch'
+  - Renamed the output shared library argument to 'lib_binsearch.so'
+  - Renamed the source C file argument to 'lib_binsearch.c'
+- Had to alter 'lib_binsearch.c' file in the following way:
+  - Added additional include for the 'stdlib.h' header

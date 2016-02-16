@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <jni.h>
 #include "MyBinarySearch.h"
 
@@ -66,8 +67,3 @@ int bs(jint *buf, jint target, int left , int idx, int right){
     return bs(buf, target, left, idx, right);
   }
 }
-
-
-
-  
-
