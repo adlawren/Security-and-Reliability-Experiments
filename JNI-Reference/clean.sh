@@ -1,1 +1,1 @@
-rm Driver.class MyBinarySearch.class libbinsearch.so
+rm Driver.class MyBinarySearch.class libbinsearch.so MyBinarySearch.h
