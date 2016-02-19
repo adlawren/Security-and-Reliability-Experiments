@@ -1,1 +1,1 @@
-rm Driver.class MySort.class libsort.so MySort.h
+rm *.class *.so MySort.h

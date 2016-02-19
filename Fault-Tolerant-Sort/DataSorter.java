@@ -5,10 +5,10 @@ import java.lang.*;
  * @author adlawren
  *
  * TODO: Add more details.
- * This is the driver of the fault tolerant sorting application.
+ * This is the data sorter for the fault tolerant sorting application.
  */
 
-public class Driver {
+public class DataSorter {
 
 	public static void main(String[] args) {
 
