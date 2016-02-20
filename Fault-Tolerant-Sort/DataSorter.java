@@ -96,8 +96,6 @@ class IntMinHeap {
 
    public String toString() {
 
-		 System.out.println("Heap:");
-
      StringBuilder builder = new StringBuilder();
      for (int i = 1; i < heap.size(); ++i) {
        builder.append(heap.get(i));
@@ -133,28 +131,59 @@ public class DataSorter {
 	public static void main(String[] args) {
 
 		// TODO: uncomment; testing right now
-		// if (args.length != 5) {
-		// 	System.err.println("ERROR: Incorrect number of arguments");
-		// 	return;
-		// }
-
-		// TODO: remove; HeapSort Test
-		IntMinHeap heap = new IntMinHeap();
-
-		Random rand = new Random(System.currentTimeMillis());
-
-		int[] buf = new int[BUFFER_SIZE];
-		for (int i = BUFFER_SIZE - 1; i >= 0; --i){
-			buf[i] = rand.nextInt(100);
+		if (args.length != 5) {
+			System.err.println("ERROR: Incorrect number of arguments");
+			return;
 		}
 
-		System.out.println(Arrays.toString(heapSort(buf)));
+		int[] buf = null;
+		BufferedReader reader = null;
+		try {
+
+			// Read Input Values
+			reader = new BufferedReader(new FileReader(args[0]));
+			String[] values = reader.readLine().split(" ");
+
+			buf = new int[values.length];
+			for (int i = 0; i < buf.length; ++i) {
+				buf[i] = Integer.parseInt(values[i]);
+			}
+
+			// Sort Values
+			int[] sortedBuf = heapSort(buf);
+
+			// Test
+			// buf = heapSort(buf);
+
+			// Store Values in Output File
+			FileWriter writer = new FileWriter(args[1]);
+			for (int i = 0; i < sortedBuf.length; ++i) {
+
+        writer.write(Integer.toString(sortedBuf[i]));
+
+        if (i != sortedBuf.length - 1) {
+          writer.write(" ");
+        }
+      }
+
+      writer.write("\n");
+      writer.flush();
+      writer.close();
+
+		} catch (Exception e) {
+			System.out.println("ERROR: Exception Occured.");
+		}
 
 		try {
+
 			MySort s = new MySort();
 			System.loadLibrary("sort");
 
-			s.sort(buf);
+			System.out.println("Before: " + Arrays.toString(buf));
+
+			int[] testBuf = s.sort(buf);
+
+			System.out.println("After: " + Arrays.toString(testBuf));
 		} catch (Exception e) {
 				System.out.println("ERROR: Exception Occured.");
 		}

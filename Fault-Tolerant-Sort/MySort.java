@@ -9,5 +9,5 @@
 
 public class MySort {
 
-  public native void sort(int[] buf);
+  public native int[] sort(int[] buf);
 }
