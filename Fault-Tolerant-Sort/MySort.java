@@ -8,5 +8,4 @@
 public class MySort {
 
   public native void sort(int[] buf);
-
 }

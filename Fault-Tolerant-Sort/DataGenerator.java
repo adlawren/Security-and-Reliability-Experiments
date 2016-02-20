@@ -1,5 +1,6 @@
 import java.io.*;
 import java.lang.*;
+import java.util.*;
 
 /*
  * @author adlawren
@@ -9,6 +10,8 @@ import java.lang.*;
  */
 
 public class DataGenerator {
+
+  private static final int RAND_MAX = 100;
 
 	public static void main(String[] args) {
 
@@ -35,14 +38,16 @@ public class DataGenerator {
       return;
     }
 
+    Random randGenerator = new Random(System.currentTimeMillis());
 		try {
 
       for (int i = 0; i < count; ++i) {
 
+        int nextRand = randGenerator.nextInt(RAND_MAX);
+        writer.write(Integer.toString(nextRand));
+
         if (i != count - 1) {
-          writer.write(Integer.toString(i) + " ");
-        } else {
-          writer.write(Integer.toString(i));
+          writer.write(" ");
         }
       }
 
