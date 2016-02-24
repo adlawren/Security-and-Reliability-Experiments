@@ -15,37 +15,6 @@ public class DataSorter {
 
 	public static void main(String[] args) {
 
-		// int[] buf = null;
-		// BufferedReader reader = null;
-		// try {
-    //
-		// 	// Read Input Values
-    //   buf = FileManager.readIntArrayFromFile(args[0]);
-    //
-		// 	// Sort Values
-		// 	int[] sortedBuf = heapSort(buf);
-    //
-    //   // Write sorted values to output file
-    //   FileManager.writeIntArrayToFile(args[1], sortedBuf);
-    //
-		// } catch (Exception e) {
-		// 	System.out.println("ERROR: Exception Occured.");
-		// }
-    //
-		// try {
-    //
-		// 	MySort s = new MySort();
-		// 	System.loadLibrary("sort");
-    //
-		// 	System.out.println("Before: " + Arrays.toString(buf));
-    //
-		// 	int[] testBuf = s.sort(buf);
-    //
-		// 	System.out.println("After: " + Arrays.toString(testBuf));
-		// } catch (Exception e) {
-		// 		System.out.println("ERROR: Exception Occured.");
-		// }
-
     // Input Sanitation
     if (args.length != 5) {
       System.err.println("ERROR: Incorrect number of arguments");
