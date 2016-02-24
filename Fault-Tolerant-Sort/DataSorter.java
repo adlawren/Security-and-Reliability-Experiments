@@ -30,43 +30,109 @@ public class DataSorter {
 
 	public static void main(String[] args) {
 
-		if (args.length != 5) {
-			System.err.println("ERROR: Incorrect number of arguments");
-			return;
-		}
+		// if (args.length != 5) {
+		// 	System.err.println("ERROR: Incorrect number of arguments");
+		// 	return;
+		// }
+    //
+		// int[] buf = null;
+		// BufferedReader reader = null;
+		// try {
+    //
+		// 	// Read Input Values
+    //   buf = FileManager.readIntArrayFromFile(args[0]);
+    //
+		// 	// Sort Values
+		// 	int[] sortedBuf = heapSort(buf);
+    //
+    //   // Write sorted values to output file
+    //   FileManager.writeIntArrayToFile(args[1], sortedBuf);
+    //
+		// } catch (Exception e) {
+		// 	System.out.println("ERROR: Exception Occured.");
+		// }
+    //
+		// try {
+    //
+		// 	MySort s = new MySort();
+		// 	System.loadLibrary("sort");
+    //
+		// 	System.out.println("Before: " + Arrays.toString(buf));
+    //
+		// 	int[] testBuf = s.sort(buf);
+    //
+		// 	System.out.println("After: " + Arrays.toString(testBuf));
+		// } catch (Exception e) {
+		// 		System.out.println("ERROR: Exception Occured.");
+		// }
 
-		int[] buf = null;
-		BufferedReader reader = null;
-		try {
+    // Input Sanitation
+    if (args.length != 5) {
+      System.err.println("ERROR: Incorrect number of arguments");
+      return;
+    }
 
-			// Read Input Values
-      buf = FileManager.readIntArrayFromFile(args[0]);
+    File inputFile = new File(args[0]);
+    if (!inputFile.exists() || !inputFile.isFile()) {
 
-			// Sort Values
-			int[] sortedBuf = heapSort(buf);
+      System.err.println("ERROR: Input file does not exist");
+      return;
+    }
 
-      // Write sorted values to output file
-      FileManager.writeIntArrayToFile(args[1], sortedBuf);
+    // Needed?
+    if (args[1].length() < 1) {
 
-		} catch (Exception e) {
-			System.out.println("ERROR: Exception Occured.");
-		}
+      System.err.println("ERROR: Output filename must have non-zero length");
+      return;
+    }
 
-		try {
+    double primaryFailureProbability = -1.0f;
+    try {
 
-			MySort s = new MySort();
-			System.loadLibrary("sort");
+      primaryFailureProbability = Double.parseDouble(args[2]);
 
-			System.out.println("Before: " + Arrays.toString(buf));
+      if (Double.compare(primaryFailureProbability, 0.0f) < 0 || Double.compare(primaryFailureProbability, 1.0f) > 0) {
+        throw new IllegalArgumentException();
+      }
+    } catch (Exception e) {
 
-			int[] testBuf = s.sort(buf);
+      System.err.println("ERROR: Failure while parsing probability of primary failure (third argument), is the given value a floating point number between 0 and 1?");
+      return;
+    }
 
-			System.out.println("After: " + Arrays.toString(testBuf));
-		} catch (Exception e) {
-				System.out.println("ERROR: Exception Occured.");
-		}
+    double secondaryFailureProbability = -1.0f;
+    try {
 
-    Executive exec = new Executive(Integer.parseInt(args[4]));
+      secondaryFailureProbability = Double.parseDouble(args[3]);
+
+      if (Double.compare(secondaryFailureProbability, 0.0f) < 0 || Double.compare(secondaryFailureProbability, 1.0f) > 0) {
+        throw new IllegalArgumentException();
+      }
+    } catch (Exception e) {
+
+      System.err.println("ERROR: Failure while parsing probability of secondary failure (fourth argument), is the given value a floating point number between 0 and 1?");
+      return;
+    }
+
+    int timeLimit = -1;
+    try {
+
+      timeLimit = Integer.parseInt(args[4]);
+
+      if (timeLimit < 0) {
+        throw new IllegalArgumentException();
+      }
+    } catch (Exception e) {
+
+      System.err.println("ERROR: Failure while parsing time limite (fifth argument), is the given value a non-zero integer?");
+      return;
+    }
+
+    Executive exec = new Executive(args[0],
+                                    args[1],
+                                    primaryFailureProbability,
+                                    secondaryFailureProbability,
+                                    timeLimit);
 
     exec.start();
     try {

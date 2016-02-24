@@ -18,7 +18,7 @@ public class Driver {
 		TestStopMethod mythread = new TestStopMethod();
 		Timer t = new Timer();
 		Watchdog w = new Watchdog(mythread);
-		t.schedule(w, 1000);
+		t.schedule(w, 5000);
 		mythread.start();
 		try {
 			mythread.join();
