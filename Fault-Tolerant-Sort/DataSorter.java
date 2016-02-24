@@ -33,9 +33,9 @@ class IntMinHeap {
 		while (i < heap.size()) {
 
 			minIdx = -1;
+      nextIdx = 2 * i;
 
-			nextIdx = new Double(Math.pow(2.0f, new Integer(i).doubleValue())).intValue();
-			if ((nextIdx < heap.size()) && (heap.get(i) > heap.get(nextIdx))) {
+      if ((nextIdx < heap.size()) && (heap.get(i) > heap.get(nextIdx))) {
 				minIdx = nextIdx;
 			}
 
@@ -107,7 +107,7 @@ class IntMinHeap {
 
      return builder.toString();
    }
- }
+}
 
 public class DataSorter {
 
@@ -130,7 +130,6 @@ public class DataSorter {
 
 	public static void main(String[] args) {
 
-		// TODO: uncomment; testing right now
 		if (args.length != 5) {
 			System.err.println("ERROR: Incorrect number of arguments");
 			return;
@@ -151,9 +150,6 @@ public class DataSorter {
 
 			// Sort Values
 			int[] sortedBuf = heapSort(buf);
-
-			// Test
-			// buf = heapSort(buf);
 
 			// Store Values in Output File
 			FileWriter writer = new FileWriter(args[1]);
