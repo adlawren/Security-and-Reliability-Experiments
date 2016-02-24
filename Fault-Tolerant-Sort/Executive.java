@@ -68,7 +68,8 @@ public class Executive extends Thread {
 
       if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
 
-        // ...
+        FileManager.writeIntArrayToFile(outputFileName, buf);
+
         System.out.println("Primary Success!! :D"); // Test
         return;
       }
@@ -105,7 +106,8 @@ public class Executive extends Thread {
 
       if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
 
-        // ...
+        FileManager.writeIntArrayToFile(outputFileName, buf);
+        
         System.out.println("Backup Success!! :D"); // Test
         return;
       }
