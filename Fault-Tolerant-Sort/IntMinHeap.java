@@ -13,7 +13,9 @@ import java.util.*;
 
 public class IntMinHeap {
 
-	ArrayList<Integer> heap = null;
+	private int memoryAccessCount = 0;
+
+	private ArrayList<Integer> heap = null;
 
 	private void percolateUp() {
 
@@ -21,6 +23,7 @@ public class IntMinHeap {
 
 			if (heap.get(i / 2) > heap.get(i)) {
 				Collections.swap(heap, i, i / 2);
+				memoryAccessCount += 2;
 			} else {
 				break;
 			}
@@ -30,28 +33,36 @@ public class IntMinHeap {
 	private void percolateDown() {
 
 		int i = 1, nextIdx = -1, minIdx = -1;
+		memoryAccessCount += 3;
+
 		while (i < heap.size()) {
 
 			minIdx = -1;
-     nextIdx = 2 * i;
+			nextIdx = 2 * i;
+			memoryAccessCount += 2;
 
-     if ((nextIdx < heap.size()) && (heap.get(i) > heap.get(nextIdx))) {
+			if ((nextIdx < heap.size()) && (heap.get(i) > heap.get(nextIdx))) {
 				minIdx = nextIdx;
+				memoryAccessCount += 1;
 			}
 
 			if ((nextIdx + 1 < heap.size()) && (heap.get(i) > heap.get(nextIdx + 1))) {
 				if (minIdx != -1) {
 					if (heap.get(minIdx) > heap.get(nextIdx + 1)) {
 						minIdx = nextIdx + 1;
+						memoryAccessCount += 1;
 					}
 				} else {
 					minIdx = nextIdx + 1;
+					memoryAccessCount += 1;
 				}
 			}
 
 			if (minIdx != -1) {
 				Collections.swap(heap, i, minIdx);
 				i = minIdx;
+
+				memoryAccessCount += 2;
 			} else {
 				break;
 			}
@@ -61,14 +72,14 @@ public class IntMinHeap {
 	public IntMinHeap() {
 		heap = new ArrayList<Integer>();
 		heap.add(-1); // Heap items start at index 1
-	}
 
-	public int size() {
-		return heap.size() - 1;
+		memoryAccessCount += 2;
 	}
 
 	public void insert(int toAdd) {
     heap.add(toAdd);
+		memoryAccessCount += 1;
+
     percolateUp();
 	}
 
@@ -77,34 +88,14 @@ public class IntMinHeap {
 		int min = heap.get(1);
 		heap.set(1, heap.get(heap.size() - 1));
 		heap.remove(heap.size() - 1);
+		memoryAccessCount += 3;
 
 		percolateDown();
 
 		return min;
 	}
 
-	public int[] toIntArray() {
-		Integer[] intermediateArray = heap.toArray(new Integer[heap.size()]);
-
-		int[] array = new int[heap.size()];
-		for (int i = 0; i < heap.size(); ++i) {
-			array[i] = intermediateArray[i].intValue();
-		}
-
-		return array;
+	public int getMemoryAccesses() {
+		return memoryAccessCount;
 	}
-
-  public String toString() {
-
-    StringBuilder builder = new StringBuilder();
-    for (int i = 1; i < heap.size(); ++i) {
-      builder.append(heap.get(i));
-
-			 if (i < heap.size() - 1) {
-				 builder.append(" ");
-			 }
-    }
-
-    return builder.toString();
-  }
 }

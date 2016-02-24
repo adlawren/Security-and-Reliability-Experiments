@@ -13,10 +13,13 @@ import java.util.*;
 
 public class BackupSort extends Thread {
 
+  private int memoryAccessCount = 0;
+
   private int[] buf = null;
 
   public BackupSort(int[] initialBuf) {
     buf = initialBuf;
+    memoryAccessCount += 1;
   }
 
   public void run() {
@@ -35,6 +38,12 @@ public class BackupSort extends Thread {
   }
 
   public int[] getArray() {
-    return buf;
+
+    memoryAccessCount += buf.length - 1;
+    return Arrays.copyOf(buf, buf.length - 1);
+  }
+
+  public int getMemoryAccesses() {
+    return memoryAccessCount + 1;
   }
 }

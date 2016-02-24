@@ -70,6 +70,15 @@ public class Executive extends Thread {
 
         FileManager.writeIntArrayToFile(outputFileName, buf);
 
+        // Determine whether or not to trigger failure
+        double hazard = primarySort.getMemoryAccesses() * primaryFailureProbability;
+
+        Random randGenerator = new Random(System.currentTimeMillis());
+        double randomValue = randGenerator.nextDouble();
+        if (Double.compare(randomValue, 0.5f) > 0 && Double.compare(randomValue, 0.5 + hazard) < 0) {
+          throw new IOException();
+        }
+
         System.out.println("Primary Success!! :D"); // Test
         return;
       }
@@ -107,7 +116,16 @@ public class Executive extends Thread {
       if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
 
         FileManager.writeIntArrayToFile(outputFileName, buf);
-        
+
+        // Determine whether or not to trigger failure
+        double hazard = backupSort.getMemoryAccesses() * secondaryFailureProbability;
+
+        Random randGenerator = new Random(System.currentTimeMillis());
+        double randomValue = randGenerator.nextDouble();
+        if (Double.compare(randomValue, 0.5f) > 0 && Double.compare(randomValue, 0.5 + hazard) < 0) {
+          throw new IOException();
+        }
+
         System.out.println("Backup Success!! :D"); // Test
         return;
       }
