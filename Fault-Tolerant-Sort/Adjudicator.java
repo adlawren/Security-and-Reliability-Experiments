@@ -24,7 +24,6 @@ public class Adjudicator {
     }
 
     if (originalBuf.length == 1) {
-
       if (originalBuf[0] == sortedBuf[0]) {
         return true;
       } else {
@@ -33,7 +32,6 @@ public class Adjudicator {
     }
 
     for (int i = 1; i < sortedBuf.length; ++i) {
-
       if (sortedBuf[i - 1] > sortedBuf[i]) {
         return false;
       }

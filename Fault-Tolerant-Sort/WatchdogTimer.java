@@ -43,9 +43,4 @@ public class WatchdogTimer extends Thread {
   public boolean timeElapsed() {
     return delayElapsed;
   }
-
-  // Needed??
-  // public void updateMonitoredThread(Thread newThread) {
-  //   monitoredThread = newThread;
-  // }
 }

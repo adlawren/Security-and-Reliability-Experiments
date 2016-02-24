@@ -38,12 +38,10 @@ public class PrimarySort extends Thread {
   public void run() {
 
     try {
+      buf = heapSort(buf);
 
-      // buf = heapSort(buf); // Test
-
-      Thread.sleep(0); // Used for testing
+      Thread.sleep(0); // Test
     } catch (InterruptedException e) {
-
       // ...
     }
   }

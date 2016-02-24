@@ -85,10 +85,8 @@ public class DataSorter {
 
     exec.start();
     try {
-
       exec.join();
     } catch (InterruptedException e) {
-
       // ...
     }
 	}

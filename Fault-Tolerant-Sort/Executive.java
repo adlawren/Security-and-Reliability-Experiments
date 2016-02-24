@@ -64,7 +64,6 @@ public class Executive extends Thread {
         throw new TimeoutException();
       }
 
-      // int[] sortedBuf = primarySort.getArray();
       buf = primarySort.getArray();
 
       if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
@@ -74,7 +73,6 @@ public class Executive extends Thread {
         return;
       }
     } catch (Exception e) {
-
       // ...
     }
 
@@ -112,7 +110,6 @@ public class Executive extends Thread {
         return;
       }
     } catch (Exception e) {
-
       // ...
     }
 
@@ -122,7 +119,6 @@ public class Executive extends Thread {
     try {
       Files.deleteIfExists(FileSystems.getDefault().getPath(outputFileName));
     } catch (IOException e) {
-
       // ...
     }
   }
