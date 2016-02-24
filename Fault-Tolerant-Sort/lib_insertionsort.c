@@ -4,7 +4,7 @@
 #include "NativeInsertionSort.h"
 
 /* Sort function */
-JNIEXPORT jintArray JNICALL Java_MySort_sort
+JNIEXPORT jintArray JNICALL Java_NativeInsertionSort_insertionSort
 (JNIEnv *env, jobject object, jintArray buf){
   jsize len;
   jint *myCopy;

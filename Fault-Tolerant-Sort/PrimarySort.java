@@ -39,9 +39,9 @@ public class PrimarySort extends Thread {
 
     try {
 
-      buf = heapSort(buf);
+      // buf = heapSort(buf);
 
-      Thread.sleep(60000); // Used for testing
+      Thread.sleep(0); // Used for testing
     } catch (InterruptedException e) {
 
       // ...
