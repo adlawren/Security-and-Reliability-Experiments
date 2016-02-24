@@ -65,5 +65,16 @@ public class DataSorter {
 		} catch (Exception e) {
 				System.out.println("ERROR: Exception Occured.");
 		}
+
+    Executive exec = new Executive(Integer.parseInt(args[4]));
+
+    exec.start();
+    try {
+
+      exec.join();
+    } catch (InterruptedException e) {
+
+      // ...
+    }
 	}
 }
