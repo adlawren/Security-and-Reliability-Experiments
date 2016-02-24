@@ -3,6 +3,15 @@
 import java.io.*;
 import java.lang.*;
 import java.util.*;
+import java.util.concurrent.*;
+import java.nio.file.*;
+
+/*
+ * @author adlawren
+ *
+ * TODO: Add more details.
+ * This is the Executive for the fault tolerant sorting application.
+ */
 
 public class Executive extends Thread {
 
@@ -31,31 +40,88 @@ public class Executive extends Thread {
 
   public void run() {
 
-    // int[] buf = FileManager();
+    // Establish checkpoint
+    int[] buf = null;
+    try {
+       buf = FileManager.readIntArrayFromFile(inputFileName);
+    } catch (Exception e) {
+      System.err.println("ERROR: Failed to establish checkpoint");
+      return;
+    }
+
+    PrimarySort primarySort = new PrimarySort(buf);
+
+    WatchdogTimer wdt = new WatchdogTimer(primarySort, timeLimit);
+    wdt.start();
 
     try {
 
-      Thread toRun = new InfiniteThread(); //new PrimarySort();
-
-      WatchdogTimer wdt = new WatchdogTimer(toRun, timeLimit);
-      wdt.start();
-
-      toRun.start();
-      toRun.join();
+      primarySort.start();
+      primarySort.join();
 
       wdt.interrupt();
       if (wdt.timeElapsed()) {
-        System.out.println("WDT time elapsed");
-      } else {
-        System.out.println("WDT time not elapsed");
+        throw new TimeoutException();
       }
 
-      // ...
+      // int[] sortedBuf = primarySort.getArray();
+      buf = primarySort.getArray();
 
-      // Remove the output file if it exists, has a non-empty filename and is a file
-      // ...
+      if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
 
-    } catch (InterruptedException e) {
+        // ...
+        System.out.println("Primary Success!! :D"); // Test
+        return;
+      }
+    } catch (Exception e) {
+
+      // ...
+    }
+
+    System.err.println("Primary sorting variant failed, running backup variant");
+
+    // Restore checkpoint
+    try {
+       buf = FileManager.readIntArrayFromFile(inputFileName);
+    } catch (Exception e) {
+      System.err.println("ERROR: Failed to establish checkpoint");
+      return;
+    }
+
+    BackupSort backupSort = new BackupSort(buf);
+
+    wdt = new WatchdogTimer(backupSort, timeLimit);
+    wdt.start();
+
+    try {
+
+      backupSort.start();
+      backupSort.join();
+
+      wdt.interrupt();
+      if (wdt.timeElapsed()) {
+        throw new TimeoutException();
+      }
+
+      buf = backupSort.getArray();
+
+      if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
+
+        // ...
+        System.out.println("Backup Success!! :D"); // Test
+        return;
+      }
+    } catch (Exception e) {
+
+      // ...
+    }
+
+    System.err.println("Both primary & secondary sorting variants have failed");
+
+    // Remove the output file if it exists, has a non-empty filename and is a file
+    try {
+      Files.deleteIfExists(FileSystems.getDefault().getPath(outputFileName));
+    } catch (IOException e) {
 
       // ...
     }

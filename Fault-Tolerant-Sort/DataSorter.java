@@ -13,28 +13,8 @@ import java.util.*;
 
 public class DataSorter {
 
-	private static int[] heapSort(int[] buf) {
-
-		IntMinHeap heap = new IntMinHeap();
-		for (int i = 0; i < buf.length; ++i) {
-			heap.insert(buf[i]);
-		}
-
-		int[] sortedBuf = new int[buf.length];
-		for (int i = 0; i < buf.length; ++i) {
-			sortedBuf[i] = heap.removeMin();
-		}
-
-		return sortedBuf;
-	}
-
 	public static void main(String[] args) {
 
-		// if (args.length != 5) {
-		// 	System.err.println("ERROR: Incorrect number of arguments");
-		// 	return;
-		// }
-    //
 		// int[] buf = null;
 		// BufferedReader reader = null;
 		// try {

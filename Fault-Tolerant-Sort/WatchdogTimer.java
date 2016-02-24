@@ -38,13 +38,14 @@ public class WatchdogTimer extends Thread {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
-
-    monitoredThread.stop();
-
-    System.out.println("Well. I'm here ...");
   }
 
   public boolean timeElapsed() {
     return delayElapsed;
   }
+
+  // Needed??
+  // public void updateMonitoredThread(Thread newThread) {
+  //   monitoredThread = newThread;
+  // }
 }

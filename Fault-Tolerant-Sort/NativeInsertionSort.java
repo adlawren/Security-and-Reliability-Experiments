@@ -7,7 +7,7 @@
  * This is the hook to the C method.
  */
 
-public class MySort {
+public class NativeInsertionSort {
 
-  public native int[] sort(int[] buf);
+  public native int[] insertionSort(int[] buf);
 }

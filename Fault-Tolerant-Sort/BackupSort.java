@@ -8,10 +8,10 @@ import java.util.*;
  * @author adlawren
  *
  * TODO: Add more details.
- * This is the Primary Sort variant for the fault tolerant sorting application.
+ * This is the Backup Sort variant for the fault tolerant sorting application.
  */
 
-public class PrimarySort extends Thread {
+public class BackupSort extends Thread {
 
   private int[] buf = null;
 
@@ -31,7 +31,7 @@ public class PrimarySort extends Thread {
     return sortedBuf;
   }
 
-  public PrimarySort(int[] initialBuf) {
+  public BackupSort(int[] initialBuf) {
     buf = initialBuf;
   }
 

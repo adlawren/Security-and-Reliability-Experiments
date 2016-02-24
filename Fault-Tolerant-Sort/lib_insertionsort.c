@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <jni.h>
-#include "MySort.h"
+#include "NativeInsertionSort.h"
 
 /* Sort function */
 JNIEXPORT jintArray JNICALL Java_MySort_sort

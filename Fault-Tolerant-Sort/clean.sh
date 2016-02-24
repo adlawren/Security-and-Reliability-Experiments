@@ -1,1 +1,1 @@
-rm *.class *.so MySort.h
+rm *.class *.so NativeInsertionSort.h
