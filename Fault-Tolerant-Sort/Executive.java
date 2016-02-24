@@ -79,7 +79,7 @@ public class Executive extends Thread {
           throw new IOException();
         }
 
-        System.out.println("Primary Success!! :D"); // Test
+        System.out.println("Primary variant has successfully sorted the array. Exiting.");
         return;
       }
     } catch (Exception e) {
@@ -122,11 +122,12 @@ public class Executive extends Thread {
 
         Random randGenerator = new Random(System.currentTimeMillis());
         double randomValue = randGenerator.nextDouble();
+
         if (Double.compare(randomValue, 0.5f) > 0 && Double.compare(randomValue, 0.5 + hazard) < 0) {
           throw new IOException();
         }
 
-        System.out.println("Backup Success!! :D"); // Test
+        System.out.println("Backup variant has successfully sorted the array. Exiting.");
         return;
       }
     } catch (Exception e) {

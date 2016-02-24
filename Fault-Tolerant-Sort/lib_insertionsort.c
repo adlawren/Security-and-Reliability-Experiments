@@ -14,7 +14,7 @@ JNIEXPORT jintArray JNICALL Java_NativeInsertionSort_insertionSort
 
   len = (*env)->GetArrayLength(env, buf);
   myCopy = (jint *) (*env)->GetIntArrayElements(env, buf, is_copy);
-  if (myCopy == NULL){
+  if (myCopy == NULL) {
     printf("ERROR: Array could not be retrieved from JVM.\n");
     exit(0);
   }
