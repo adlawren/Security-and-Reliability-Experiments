@@ -1,4 +1,4 @@
-//package com.adlawren.fault.tolerant.sort;
+//package com.adlawren.fts;
 
 import java.io.*;
 import java.lang.*;
@@ -22,15 +22,6 @@ public class DataGenerator {
       return;
     }
 
-    FileWriter writer = null;
-    try {
-      writer = new FileWriter(args[0]);
-    } catch (Exception e) {
-
-      System.err.println("ERROR: File could not be created.");
-      return;
-    }
-
     int count = -1;
     try {
       count = Integer.parseInt(args[1]);
@@ -43,19 +34,12 @@ public class DataGenerator {
     Random randGenerator = new Random(System.currentTimeMillis());
 		try {
 
+      int[] buf = new int[count];
       for (int i = 0; i < count; ++i) {
-
-        int nextRand = randGenerator.nextInt(RAND_MAX);
-        writer.write(Integer.toString(nextRand));
-
-        if (i != count - 1) {
-          writer.write(" ");
-        }
+        buf[i] = randGenerator.nextInt(RAND_MAX);
       }
 
-      writer.write("\n");
-      writer.flush();
-      writer.close();
+      FileManager.writeIntArrayToFile(args[0], buf);
 
 		} catch (Exception e) {
       System.err.println("ERROR: Values could not be written to the file.");
