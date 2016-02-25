@@ -9,13 +9,12 @@ import java.nio.file.*;
 /*
  * @author adlawren
  *
- * TODO: Add more details.
  * This is the Executive for the fault tolerant sorting application.
  */
 
 public class Executive extends Thread {
 
-  String inputFileName = null,
+  private String inputFileName = null,
           outputFileName = null;
 
   private double primaryFailureProbability = -1.0f,
@@ -69,7 +68,7 @@ public class Executive extends Thread {
 
       buf = primarySort.getArray();
 
-      if (Adjudicator.acceptanceTest(buf, originalLength)) { // TODO: fix
+      if (Adjudicator.acceptanceTest(buf, originalLength)) {
 
         FileManager.writeIntArrayToFile(outputFileName, buf);
 
@@ -85,9 +84,7 @@ public class Executive extends Thread {
         System.out.println("Primary variant has successfully sorted the array. Exiting.");
         return;
       }
-    } catch (Exception e) {
-      // ...
-    }
+    } catch (Exception e) {}
 
     System.err.println("Primary sorting variant failed, running backup variant");
 
@@ -117,7 +114,7 @@ public class Executive extends Thread {
 
       buf = backupSort.getArray();
 
-      if (Adjudicator.acceptanceTest(buf, originalLength)) { // TODO: fix
+      if (Adjudicator.acceptanceTest(buf, originalLength)) {
 
         FileManager.writeIntArrayToFile(outputFileName, buf);
 
@@ -134,17 +131,13 @@ public class Executive extends Thread {
         System.out.println("Backup variant has successfully sorted the array. Exiting.");
         return;
       }
-    } catch (Exception e) {
-      // ...
-    }
+    } catch (Exception e) {}
 
     System.err.println("Both primary & secondary sorting variants have failed");
 
     // Remove the output file if it exists, has a non-empty filename and is a file
     try {
       Files.deleteIfExists(FileSystems.getDefault().getPath(outputFileName));
-    } catch (IOException e) {
-      // ...
-    }
+    } catch (IOException e) {}
   }
 }

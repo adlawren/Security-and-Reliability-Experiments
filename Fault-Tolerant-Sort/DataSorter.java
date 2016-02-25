@@ -7,7 +7,6 @@ import java.util.*;
 /*
  * @author adlawren
  *
- * TODO: Add more details.
  * This is the data sorter for the fault tolerant sorting application.
  */
 
@@ -28,7 +27,6 @@ public class DataSorter {
       return;
     }
 
-    // Needed?
     if (args[1].length() < 1) {
 
       System.err.println("ERROR: Output filename must have non-zero length");
@@ -86,8 +84,6 @@ public class DataSorter {
     exec.start();
     try {
       exec.join();
-    } catch (InterruptedException e) {
-      // ...
-    }
+    } catch (InterruptedException e) {}
 	}
 }

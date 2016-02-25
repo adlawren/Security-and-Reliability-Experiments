@@ -3,7 +3,6 @@
 /**
  * @author adlawren
  *
- * TODO: Add more details.
  * This is the hook to the C method.
  */
 

@@ -7,7 +7,6 @@ import java.util.*;
 /*
  * @author adlawren
  *
- * TODO: Add more details.
  * This is the Backup Sort variant for the fault tolerant sorting application.
  */
 
@@ -31,10 +30,8 @@ public class BackupSort extends Thread {
 
     	buf = s.insertionSort(buf);
 
-      Thread.sleep(0); // Test
-    } catch (InterruptedException e) {
-      // ...
-    }
+      Thread.sleep(0);
+    } catch (InterruptedException e) {}
   }
 
   public int[] getArray() {

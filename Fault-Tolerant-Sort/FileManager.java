@@ -7,7 +7,6 @@ import java.util.*;
 /*
  * @author adlawren
  *
- * TODO: Add more details.
  * This is the File Manager for the fault tolerant sorting application.
  */
 

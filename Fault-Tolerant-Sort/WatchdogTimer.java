@@ -9,16 +9,15 @@ import java.util.concurrent.*;
 /*
  * @author adlawren
  *
- * TODO: Add more details.
  * This is the Watchdog Timer for the fault tolerant sorting application.
  */
 
 public class WatchdogTimer extends Thread {
 
-  Thread monitoredThread = null;
+  private Thread monitoredThread = null;
 
-  int killDelay = -1;
-  boolean delayElapsed = false;
+  private int killDelay = -1;
+  private boolean delayElapsed = false;
 
   public WatchdogTimer(Thread toMonitor, int delay) {
 
