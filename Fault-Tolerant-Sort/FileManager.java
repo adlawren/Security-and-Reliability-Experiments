@@ -18,9 +18,13 @@ public class FileManager {
     BufferedReader reader = new BufferedReader(new FileReader(fileName));
     String[] values = reader.readLine().split(" ");
 
+    if (values.length == 1 && values[0].length() == 0) {
+      return new int[0];
+    }
+
     int[] buf = new int[values.length];
     for (int i = 0; i < buf.length; ++i) {
-      buf[i] = Integer.parseInt(values[i]);
+        buf[i] = Integer.parseInt(values[i]);
     }
 
     return buf;

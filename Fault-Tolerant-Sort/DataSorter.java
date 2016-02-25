@@ -15,7 +15,7 @@ public class DataSorter {
 
 	public static void main(String[] args) {
 
-    // Input Sanitation
+		// Input Sanitation
     if (args.length != 5) {
       System.err.println("ERROR: Incorrect number of arguments");
       return;
