@@ -42,8 +42,11 @@ public class Executive extends Thread {
 
     // Establish checkpoint
     int[] buf = null;
+    int originalLength = -1;
+
     try {
        buf = FileManager.readIntArrayFromFile(inputFileName);
+       originalLength = buf.length;
     } catch (Exception e) {
       System.err.println("ERROR: Failed to establish checkpoint");
       return;
@@ -66,7 +69,7 @@ public class Executive extends Thread {
 
       buf = primarySort.getArray();
 
-      if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
+      if (Adjudicator.acceptanceTest(buf, originalLength)) { // TODO: fix
 
         FileManager.writeIntArrayToFile(outputFileName, buf);
 
@@ -91,6 +94,7 @@ public class Executive extends Thread {
     // Restore checkpoint
     try {
        buf = FileManager.readIntArrayFromFile(inputFileName);
+       originalLength = buf.length;
     } catch (Exception e) {
       System.err.println("ERROR: Failed to establish checkpoint");
       return;
@@ -113,7 +117,7 @@ public class Executive extends Thread {
 
       buf = backupSort.getArray();
 
-      if (Adjudicator.acceptanceTest(buf, buf)) { // TODO: fix
+      if (Adjudicator.acceptanceTest(buf, originalLength)) { // TODO: fix
 
         FileManager.writeIntArrayToFile(outputFileName, buf);
 

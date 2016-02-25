@@ -13,22 +13,14 @@ import java.util.*;
 
 public class Adjudicator {
 
-  public static boolean acceptanceTest(int[] originalBuf, int[] sortedBuf) {
+  public static boolean acceptanceTest(int[] sortedBuf, int originalLength) {
 
-    if (originalBuf.length != sortedBuf.length) {
+    if (sortedBuf.length != originalLength) {
       return false;
     }
 
-    if (originalBuf.length == 0) {
+    if (sortedBuf.length <= 1) {
       return true;
-    }
-
-    if (originalBuf.length == 1) {
-      if (originalBuf[0] == sortedBuf[0]) {
-        return true;
-      } else {
-        return false;
-      }
     }
 
     for (int i = 1; i < sortedBuf.length; ++i) {
