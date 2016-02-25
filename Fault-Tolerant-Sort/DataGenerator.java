@@ -13,7 +13,7 @@ import java.util.*;
 
 public class DataGenerator {
 
-  private static final int RAND_MAX = 100;
+  private static final int RAND_MAX = 1000000;
 
 	public static void main(String[] args) {
 
