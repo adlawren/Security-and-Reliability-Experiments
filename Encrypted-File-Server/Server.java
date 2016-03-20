@@ -12,18 +12,18 @@ public class Server {
 
         char[] charArray = {'a', 's', 'd', 'f'};
 
-        char[] encryptResult = teaLibrary.encrypt(charArray);
+        // char[] encryptResult = teaLibrary.encrypt(charArray);
+        // teaLibrary.encrypt(s);
+        String encryptResult = teaLibrary.encrypt(s);
 
-        System.out.println("Results in java: ");
-        for (int i = 0; i < encryptResult.length; ++i) {
-            System.out.print(encryptResult[i]);
-        }
-
-        System.out.println("");
+        System.out.println("Encryption results in java: size: " +
+            encryptResult.length() +
+            " Contents: " +
+            encryptResult);
 
         char[] decryptResult = teaLibrary.decrypt(charArray);
 
-        System.out.println("Results in java: ");
+        System.out.println("Decryption results in java: ");
         for (int i = 0; i < decryptResult.length; ++i) {
             System.out.print(decryptResult[i]);
         }
