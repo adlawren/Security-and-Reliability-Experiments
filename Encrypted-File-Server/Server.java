@@ -7,9 +7,7 @@ public class Server {
         TEALibrary teaLibrary = new TEALibrary();
         System.loadLibrary("tea");
 
-        // String s = "abcdefghijklmnopqrstuvwxyzabcdefghijkl";
         String s = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
-        // String s = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
 
         long[] testKey = {0, 1, 2, 3};
 
@@ -22,10 +20,5 @@ public class Server {
         String decryptResult = new String(teaLibrary.decrypt(encryptResult.toCharArray(), testKey));
         System.out.println("Decryption results in java: " + decryptResult);
         System.out.println("Decrypted string length: " + decryptResult.length());
-
-        // System.out.println("Decryption breakdown:");
-        // for (char c : decryptResult.toCharArray()) {
-        //     System.out.println(c);
-        // }
     }
 }

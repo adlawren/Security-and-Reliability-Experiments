@@ -56,7 +56,6 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
       exit(0);
     }
 
-    // int block_size = 2 * sizeof(long);
     int block_size = sizeof(long);
 
     int paddedSize;
@@ -85,8 +84,6 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
     // Append the unpadded length to the last block
     encryptedCopy[ paddedSize - block_size ] = (jchar) bufLen;
 
-    printf("Encoded unpadded length: %d\n", (int) encryptedCopy[ paddedSize - block_size ]);
-
     long values[2] = {0, 0};
     int block_idx = 0;
     for (i = 0; i < paddedSize; ++i) {
@@ -94,10 +91,8 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
 
         long next_value = (long) encryptedCopy[i];
         if (idx_mod < block_size / 2) {
-            // values[0] |= (next_value << idx_mod * 8);
             values[0] |= (next_value << (idx_mod * sizeof(jchar) * 8));
         } else {
-            // values[1] |= (next_value << idx_mod * 8);
             values[1] |= (next_value << (idx_mod * sizeof(jchar) * 8));
         }
 
@@ -109,10 +104,8 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
             for (j = 0; j < block_size; ++j) {
                 long next_encrypted_value;
                 if (j < block_size / 2) {
-                    // next_encrypted_value = (values[0] >> (j * 8)) & 0xff;
                     next_encrypted_value = (values[0] >> (j * sizeof(jchar) * 8)) & 0xffff;
                 } else {
-                    // next_encrypted_value = (values[1] >> (j * 8)) & 0xff;
                     next_encrypted_value = (values[1] >> (j * sizeof(jchar) * 8)) & 0xffff;
                 }
 
@@ -178,7 +171,6 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
     }
 
     long values[2] = {0, 0};
-    // int block_size = 2 * sizeof(long), block_idx = 0;
     int block_size = sizeof(long), block_idx = 0;
 
     int i = 0;
@@ -187,10 +179,8 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
 
         long next_value = (long) bufCopy[i];
         if (idx_mod < block_size / 2) {
-            // values[0] |= (next_value << idx_mod * 8);
             values[0] |= (next_value << (idx_mod * sizeof(jchar) * 8));
         } else {
-            // values[1] |= (next_value << idx_mod * 8);
             values[1] |= (next_value << (idx_mod * sizeof(jchar) * 8));
         }
 
@@ -202,10 +192,8 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
             for (j = 0; j < block_size; ++j) {
                 long next_encrypted_value;
                 if (j < block_size / 2) {
-                    // next_encrypted_value = (values[0] >> (j * 8)) & 0xff;
                     next_encrypted_value = (values[0] >> (j * sizeof(jchar) * 8)) & 0xffff;
                 } else {
-                    // next_encrypted_value = (values[1] >> (j * 8)) & 0xff;
                     next_encrypted_value = (values[1] >> (j * sizeof(jchar) * 8)) & 0xffff;
                 }
 
@@ -221,9 +209,6 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
 
     // Fetch the unpadded length
     jsize unpaddedSize = (jsize) bufCopy[ bufLen - block_size ];
-
-    printf("Decoded unpadded length: %d\n", (int) bufCopy[ bufLen - block_size ]);
-    printf("jsize unpadded length: %d\n", unpaddedSize);
 
     // Create resultant buffer
     jcharArray decryptedBuf = (*env)->NewCharArray(env, unpaddedSize);
