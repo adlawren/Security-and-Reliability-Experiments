@@ -19,7 +19,7 @@ void encrypt (long *v, long *k) {
 	v[1] = z;
 }
 
-void duplicate_array_contacts(jchar *src, jchar *dest, jsize len) {
+void duplicate_array_contents(jchar *src, jchar *dest, jsize len) {
     int i;
     for (i = 0; i < len; ++i) {
         dest[i] = src[i];
@@ -84,13 +84,10 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
         encryptedCopy[i] = (jchar) rand();
     }
 
-    // Duplicate array contents
-    for (i = 0; i < bufLen; ++i) {
-      encryptedCopy[i] = bufCopy[i];
-    }
+    duplicate_array_contents(bufCopy, encryptedCopy, bufLen);
 
-    // Append unpadded length to the last block of the encrypted contents
-    // ...
+    // Append the unpadded length to the last block
+    encryptedCopy[ paddedSize - block_size ] = (jchar) bufLen;
 
     long values[2] = {0, 0};
     int block_idx = 0;
@@ -177,25 +174,14 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
       exit(0);
     }
 
-    jcharArray decryptedBuf = (*env)->NewCharArray(env, bufLen);
-    jchar *decryptedCopy = (jchar *) (*env)->GetCharArrayElements(env, decryptedBuf, is_copy);
-    if (decryptedCopy == NULL) {
-      printf("ERROR: Array could not be retrieved from JVM.\n");
-      exit(0);
-    }
-
-    // Duplicate array contents
-    int i;
-    for (i = 0; i < bufLen; ++i) {
-      decryptedCopy[i] = bufCopy[i];
-    }
-
     long values[2] = {0, 0};
     int block_size = 2 * sizeof(long), block_idx = 0;
+
+    int i = 0;
     for (i = 0; i < bufLen; ++i) {
         int idx_mod = i % block_size;
 
-        long next_value = (long) decryptedCopy[i];
+        long next_value = (long) bufCopy[i];
         if (idx_mod < block_size / 2) {
             values[0] |= (next_value << idx_mod * 8);
         } else {
@@ -215,7 +201,7 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
                     next_encrypted_value = (values[1] >> (j * 8)) & 0xff;
                 }
 
-                decryptedCopy[ block_idx * block_size + j ] = (jchar) next_encrypted_value;
+                bufCopy[ block_idx * block_size + j ] = (jchar) next_encrypted_value;
             }
 
             ++block_idx;
@@ -224,6 +210,20 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
             values[1] = 0;
         }
     }
+
+    // Fetch the unpadded length
+    jsize unpaddedSize = (jsize) bufCopy[ bufLen - block_size ];
+
+    // Create resultant buffer
+    jcharArray decryptedBuf = (*env)->NewCharArray(env, unpaddedSize);
+    jchar *decryptedCopy = (jchar *) (*env)->GetCharArrayElements(env, decryptedBuf, is_copy);
+    if (decryptedCopy == NULL) {
+      printf("ERROR: Array could not be retrieved from JVM.\n");
+      exit(0);
+    }
+
+    // Copy appropriate values
+    duplicate_array_contents(bufCopy, decryptedCopy, unpaddedSize);
 
     (*env)->ReleaseCharArrayElements(env, decryptedBuf, decryptedCopy, 0);
 

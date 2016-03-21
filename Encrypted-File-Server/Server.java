@@ -22,9 +22,9 @@ public class Server {
         System.out.println("Decryption results in java: " + decryptResult);
         System.out.println("Decrypted string length: " + decryptResult.length());
 
-        System.out.println("Decryption breakdown:");
-        for (char c : decryptResult.toCharArray()) {
-            System.out.println(c);
-        }
+        // System.out.println("Decryption breakdown:");
+        // for (char c : decryptResult.toCharArray()) {
+        //     System.out.println(c);
+        // }
     }
 }
