@@ -5,7 +5,7 @@
 
 void encrypt (long *v, long *k) {
     /* TEA encryption algorithm */
-	unsigned long y = v[0], z=v[1], sum = 0;
+	unsigned long y = v[0], z=v[1], sum=0;
 	unsigned long delta = 0x9e3779b9, n=32;
 
 	while (n-- > 0){
@@ -16,34 +16,6 @@ void encrypt (long *v, long *k) {
 
 	v[0] = y;
 	v[1] = z;
-}
-
-void print_buffer_and_key(jsize bufLen, jchar *bufCopy, jsize keyLen, jlong *keyCopy) {
-    printf("Buffer length: %d\n", bufLen);
-    printf("Key length: %d\n", keyLen);
-
-    printf("Buffer contents: ");
-
-    int i;
-    for (i = 0; i < bufLen; ++i) {
-        printf("%c", bufCopy[i]);
-    }
-
-    printf("\n");
-
-    printf("Key contents: ");
-
-    for (i = 0; i < keyLen; ++i) {
-        printf("%lu ", keyCopy[i]);
-    }
-
-    printf("\n");
-}
-
-void print_values(long *values) {
-    printf("Values: ");
-    printf("%lx ", values[0]);
-    printf("%lx\n", values[1]);
 }
 
 /* Encrypt function */
@@ -87,14 +59,11 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
       encryptedCopy[i] = bufCopy[i];
     }
 
-    printf("Test: %lu\n", sizeof(jchar)); // ???
-
-    int block_size = 2 * sizeof(long), block_idx = 0;
-
     long values[2];
     values[0] = 0;
     values[1] = 0;
 
+    int block_size = 2 * sizeof(long), block_idx = 0;
     for (i = 0; i < bufLen; ++i) {
         int idx_mod = i % block_size;
 
@@ -109,26 +78,17 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
             encrypt(values, keyCopy);
 
             // Replace contents of string with encrypted contents
-            printf("Values to characters: ");
-            int k;
-            for (k = 0; k < block_size; ++k) {
+            int j;
+            for (j = 0; j < block_size; ++j) {
                 long next_encrypted_value;
-
-                if (k < block_size / 2) {
-                    next_encrypted_value = (values[0] >> (k * 8)) & 0xff;
-                    printf("%c", (jchar) next_encrypted_value);
+                if (j < block_size / 2) {
+                    next_encrypted_value = (values[0] >> (j * 8)) & 0xff;
                 } else {
-                    next_encrypted_value = (values[1] >> (k * 8)) & 0xff;
-                    printf("%c", (jchar) next_encrypted_value);
+                    next_encrypted_value = (values[1] >> (j * 8)) & 0xff;
                 }
 
-                encryptedCopy[ block_idx * block_size + k ] = (jchar) next_encrypted_value;
+                encryptedCopy[ block_idx * block_size + j ] = (jchar) next_encrypted_value;
             }
-
-            printf("\n");
-
-            printf("After encryption: ");
-            print_values(values);
 
             ++block_idx;
 
@@ -136,20 +96,6 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
             values[1] = 0;
         }
     }
-
-    printf("C: Encrypted Result in Hex: ");
-    for (i = 0; i < bufLen; ++i) {
-        printf("%x", encryptedCopy[i]);
-    }
-
-    printf("\n");
-
-    printf("C: Encrypted Result: ");
-    for (i = 0; i < bufLen; ++i) {
-        printf("%c", encryptedCopy[i]);
-    }
-
-    printf("\n");
 
     (*env)->ReleaseCharArrayElements(env, encryptedBuf, encryptedCopy, 0);
 
@@ -204,20 +150,17 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
       exit(0);
     }
 
-    print_buffer_and_key(bufLen, bufCopy, keyLen, keyCopy);
-
     // Duplicate array contents
     int i;
     for (i = 0; i < bufLen; ++i) {
       decryptedCopy[i] = bufCopy[i];
     }
 
-    int block_size = 2 * sizeof(long), block_idx = 0;
-
     long values[2];
     values[0] = 0;
     values[1] = 0;
 
+    int block_size = 2 * sizeof(long), block_idx = 0;
     for (i = 0; i < bufLen; ++i) {
         int idx_mod = i % block_size;
 
@@ -232,26 +175,17 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
             decrypt(values, keyCopy);
 
             // Replace contents of string with encrypted contents
-            printf("Values to characters: ");
-            int k;
-            for (k = 0; k < block_size; ++k) {
+            int j;
+            for (j = 0; j < block_size; ++j) {
                 long next_encrypted_value;
-
-                if (k < block_size / 2) {
-                    next_encrypted_value = (values[0] >> (k * 8)) & 0xff;
-                    printf("%c", (jchar) next_encrypted_value);
+                if (j < block_size / 2) {
+                    next_encrypted_value = (values[0] >> (j * 8)) & 0xff;
                 } else {
-                    next_encrypted_value = (values[1] >> (k * 8)) & 0xff;
-                    printf("%c", (jchar) next_encrypted_value);
+                    next_encrypted_value = (values[1] >> (j * 8)) & 0xff;
                 }
 
-                decryptedCopy[ block_idx * block_size + k ] = (jchar) next_encrypted_value;
+                decryptedCopy[ block_idx * block_size + j ] = (jchar) next_encrypted_value;
             }
-
-            printf("\n");
-
-            printf("After decryption: ");
-            print_values(values);
 
             ++block_idx;
 
@@ -259,20 +193,6 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
             values[1] = 0;
         }
     }
-
-    printf("C: Decrypted Result in Hex: ");
-    for (i = 0; i < bufLen; ++i) {
-        printf("%x", decryptedCopy[i]);
-    }
-
-    printf("\n");
-
-    printf("C: Decrypted Result: ");
-    for (i = 0; i < bufLen; ++i) {
-        printf("%c", decryptedCopy[i]);
-    }
-
-    printf("\n");
 
     (*env)->ReleaseCharArrayElements(env, decryptedBuf, decryptedCopy, 0);
 
