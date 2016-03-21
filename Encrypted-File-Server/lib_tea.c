@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <jni.h>
 #include "TEALibrary.h"
 
@@ -16,6 +17,13 @@ void encrypt (long *v, long *k) {
 
 	v[0] = y;
 	v[1] = z;
+}
+
+void duplicate_array_contacts(jchar *src, jchar *dest, jsize len) {
+    int i;
+    for (i = 0; i < len; ++i) {
+        dest[i] = src[i];
+    }
 }
 
 /* Encrypt function */
@@ -37,34 +45,56 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
     }
 
     keyLen = (*env)->GetArrayLength(env, key);
+    if (keyLen != 4) {
+        printf("ERROR: Key must be 256 bits long (4 longs must be provided).\n");
+    }
+
     keyCopy = (jlong *) (*env)->GetLongArrayElements(env, key, is_copy);
     if (bufCopy == NULL) {
       printf("ERROR: Array could not be retrieved from JVM.\n");
       exit(0);
     }
 
-    // TODO: pad values
-    // ...
+    int block_size = 2 * sizeof(long);
 
-    jcharArray encryptedBuf = (*env)->NewCharArray(env, bufLen);
+    int paddedSize;
+    if (bufLen % block_size != 0) {
+        paddedSize = bufLen + (block_size - (bufLen % block_size)) + block_size;
+    } else {
+        paddedSize = bufLen + block_size;
+    }
+
+    if (paddedSize != (bufLen + block_size)) {
+        printf("Padding needed; new size: %d.\n", paddedSize);
+    } else {
+        printf("Padding not needed; new size: %d.\n", paddedSize);
+    }
+
+    jcharArray encryptedBuf = (*env)->NewCharArray(env, paddedSize);
     jchar *encryptedCopy = (jchar *) (*env)->GetCharArrayElements(env, encryptedBuf, is_copy);
     if (encryptedCopy == NULL) {
       printf("ERROR: Array could not be retrieved from JVM.\n");
       exit(0);
     }
 
-    // Duplicate array contents
+    // Randomize array contents
+    srand(time(0));
     int i;
+    for (i = 0; i < paddedSize; ++i) {
+        encryptedCopy[i] = (jchar) rand();
+    }
+
+    // Duplicate array contents
     for (i = 0; i < bufLen; ++i) {
       encryptedCopy[i] = bufCopy[i];
     }
 
-    long values[2];
-    values[0] = 0;
-    values[1] = 0;
+    // Append unpadded length to the last block of the encrypted contents
+    // ...
 
-    int block_size = 2 * sizeof(long), block_idx = 0;
-    for (i = 0; i < bufLen; ++i) {
+    long values[2] = {0, 0};
+    int block_idx = 0;
+    for (i = 0; i < paddedSize; ++i) {
         int idx_mod = i % block_size;
 
         long next_value = (long) encryptedCopy[i];
@@ -137,6 +167,10 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
     }
 
     keyLen = (*env)->GetArrayLength(env, key);
+    if (keyLen != 4) {
+        printf("ERROR: Key must be 256 bits long (4 longs must be provided).\n");
+    }
+
     keyCopy = (jlong *) (*env)->GetLongArrayElements(env, key, is_copy);
     if (bufCopy == NULL) {
       printf("ERROR: Array could not be retrieved from JVM.\n");
@@ -156,10 +190,7 @@ JNIEXPORT jcharArray JNICALL Java_TEALibrary_decrypt
       decryptedCopy[i] = bufCopy[i];
     }
 
-    long values[2];
-    values[0] = 0;
-    values[1] = 0;
-
+    long values[2] = {0, 0};
     int block_size = 2 * sizeof(long), block_idx = 0;
     for (i = 0; i < bufLen; ++i) {
         int idx_mod = i % block_size;
