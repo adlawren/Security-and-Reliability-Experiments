@@ -7,9 +7,10 @@ public class Server {
         TEALibrary teaLibrary = new TEALibrary();
         System.loadLibrary("tea");
 
-        // String s = "abcdefghijklmnopqrstuvwxyzabcdef";
-        // String s = "abcdefghijklmnopqrstuvwxyzabcdefghij"; // Test
-        String s = "abcdefghijklmnopqrstuvwxyzabcdefghijkl"; // Test
+        // String s = "abcdefghijklmnopqrstuvwxyzabcdefghijkl";
+        String s = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+        // String s = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+
         long[] testKey = {0, 1, 2, 3};
 
         System.out.println("String length: " + s.length());
