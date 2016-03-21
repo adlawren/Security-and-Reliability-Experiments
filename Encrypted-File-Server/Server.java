@@ -7,12 +7,16 @@ public class Server {
         TEALibrary teaLibrary = new TEALibrary();
         System.loadLibrary("tea");
 
-        String s = "asdf";
+        // String s = "asdfasdfasdfasdfasdfasdfasdfasdf";
+        String s = "abcdefghijklmnopqrstuvwxyzabcdef";
+        long[] testKey = {0, 0, 0, 0};
 
-        String encryptResult = new String(teaLibrary.encrypt(s.toCharArray()));
+        // String encryptResult = new String(teaLibrary.encrypt(s.toCharArray(), testKey));
+        String encryptResult = new String(teaLibrary.encrypt(s.toCharArray(), testKey));
         System.out.println("Encryption results in java: " + encryptResult);
 
-        String decryptResult = new String(teaLibrary.decrypt(s.toCharArray()));
+        // String decryptResult = new String(teaLibrary.decrypt(s.toCharArray(), testKey));
+        String decryptResult = new String(teaLibrary.decrypt(encryptResult.toCharArray(), testKey));
         System.out.println("Decryption results in java: " + decryptResult);
     }
 }
