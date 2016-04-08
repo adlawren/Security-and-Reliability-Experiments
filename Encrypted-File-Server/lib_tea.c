@@ -96,8 +96,6 @@ JNIEXPORT jlongArray JNICALL Java_TEALibrary_encrypt
     duplicate_array_contents(bufCopy, encryptedCopy, bufLen);
     encryptedCopy[ paddedSize - 2 ] = bufLen;
 
-    printf("Padded size: %lu\n", paddedSize);
-
     long values[2] = {0, 0};
     for (i = 0; i < paddedSize; i += 2) {
         values[0] = encryptedCopy[i];
@@ -107,14 +105,6 @@ JNIEXPORT jlongArray JNICALL Java_TEALibrary_encrypt
 
         encryptedCopy[i] = values[0];
         encryptedCopy[i + 1] = values[1];
-
-        // values[0] = encryptedCopy[i];
-        // values[1] = encryptedCopy[i + 1];
-        //
-        // decrypt(values, keyCopy);
-        //
-        // encryptedCopy[i] = values[0];
-        // encryptedCopy[i + 1] = values[1];
     }
 
     (*env)->ReleaseLongArrayElements(env, encryptedBuf, encryptedCopy, 0);
@@ -166,8 +156,6 @@ JNIEXPORT jlongArray JNICALL Java_TEALibrary_decrypt
     }
 
     jlong unpaddedSize = bufCopy[ bufLen - 2 ];
-
-    printf("Unpadded size: %lu\n", unpaddedSize);
 
     // Create resultant buffer
     jlongArray decryptedBuf = (*env)->NewLongArray(env, unpaddedSize);

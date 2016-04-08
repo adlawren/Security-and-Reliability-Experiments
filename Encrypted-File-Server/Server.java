@@ -65,6 +65,7 @@ public class Server {
                 clientSocket = serverSocket.accept();
                 ServerThread serverThread = new ServerThread(clientSocket);
                 serverThread.start();
+                break; // TODO: Remove; used for testing
             }
         } catch (IOException e) {
             e.printStackTrace();

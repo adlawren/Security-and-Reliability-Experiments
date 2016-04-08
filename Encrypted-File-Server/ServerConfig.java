@@ -3,9 +3,15 @@ import java.nio.file.*;
 import java.nio.charset.*;
 import java.net.*;
 import java.util.*;
-// import java.lang.*;
 
 public class ServerConfig {
+
+    // Flags used during communication
+    public static final long ACK = 0;
+    public static final long FNF = 1;
+    public static final long FIN = 2;
+    public static final long FILENAME = 3;
+    public static final long FILE_CONTENTS = 4;
 
     // Client ids associated with pre-distributed keys
     private HashMap<String, long[]> keys = null;
@@ -26,6 +32,48 @@ public class ServerConfig {
         }
 
         return keys;
+    }
+
+    private HashMap<Long, String> messagePresets = null;
+
+    public HashMap<Long, String> getMessagePresets() {
+        if (messagePresets == null) {
+            messagePresets = new HashMap<Long, String>();
+            messagePresets.put(FNF, "File not found");
+        }
+
+        return messagePresets;
+    }
+
+    public LoginPair getCredentialsByClientId(int clientId) {
+
+        // Get user id
+        ServerConfig serverConfig = new ServerConfig();
+        HashMap<String, long[]> keys = serverConfig.getLoginInfo();
+
+        Iterator<Map.Entry<String, long[]>> it = keys.entrySet().iterator();
+
+        Map.Entry<String, long[]> entry = null;
+        int i = 0;
+        while (it.hasNext()) {
+            entry = it.next();
+            if (i == clientId) {
+                break;
+            }
+
+            ++i;
+        }
+
+        LoginPair loginPair = new LoginPair(entry.getKey(), entry.getValue());
+        return loginPair;
+    }
+
+    public LoginPair getCredentialsByEncryptedUserId(long[] encryptedUserId) {
+
+        // TODO: Implement
+        // ...
+
+        return null;
     }
 
     public ServerConfig() {
