@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     TEALibrary
  * Method:    encrypt
- * Signature: ([C[J)[C
+ * Signature: ([B[J)[C
  */
 JNIEXPORT jcharArray JNICALL Java_TEALibrary_encrypt
-  (JNIEnv *, jobject, jcharArray, jlongArray);
+  (JNIEnv *, jobject, jbyteArray, jlongArray);
 
 /*
  * Class:     TEALibrary
