@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 import java.net.*;
 import java.util.*;
@@ -16,63 +17,55 @@ public class Server {
     }
 
     // TODO: Remove; test
-    // private static void encryptionTest() {
-    //     TEALibrary teaLibrary = new TEALibrary();
-    //     System.loadLibrary("tea");
-    //
-    //     String s = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
-    //
-    //     long[] testKey = {0, 1, 2, 3};
-    //
-    //     System.out.println("Plaintext string length: " + s.length());
-    //
-    //     String encryptResult = new String(teaLibrary.encrypt(s.toCharArray(), testKey));
-    //     System.out.println("Encryption results in java: " + encryptResult);
-    //     System.out.println("Encrypted string length: " + encryptResult.length());
-    //
-    //     String decryptResult = new String(teaLibrary.decrypt(encryptResult.toCharArray(), testKey));
-    //     System.out.println("Decryption results in java: " + decryptResult);
-    //     System.out.println("Decrypted string length: " + decryptResult.length());
-    //
-    //     assert s.equals(decryptResult);
-    // }
+    private static void encryptionTest() {
+        TEALibrary teaLibrary = new TEALibrary();
+        System.loadLibrary("tea");
+
+        long[] testKey = {0, 1, 2, 3};
+
+        int value_count = 101;
+        long[] testLongArray = new long[value_count];
+
+        for (int i = 0; i < value_count; ++i) {
+            testLongArray[i] = (long) i;
+        }
+
+        long[] encryptedLongs = teaLibrary.encrypt(testLongArray, testKey);
+
+        System.out.println("Encrypted longs:");
+        for (int i = 0; i < encryptedLongs.length; ++i) {
+            System.out.println("Next long: " + encryptedLongs[i]);
+        }
+
+        long[] decryptedLongs = teaLibrary.decrypt(encryptedLongs, testKey);
+
+        System.out.println("Decrypted longs:");
+        for (int i = 0; i < decryptedLongs.length; ++i) {
+            System.out.println("Next long: " + decryptedLongs[i]);
+        }
+
+        assert testLongArray.length == decryptedLongs.length;
+
+        for (int i = 0; i < testLongArray.length; ++i) {
+            if (testLongArray[i] != decryptedLongs[i]) {
+                System.out.println("ERROR: Arrays unequal");
+                break;
+            }
+        }
+    }
 
     public static void main(String[] args) {
         try {
+            // encryptionTest();
 
-            // To read and write file as an array of bytes
-            // String filePath = "test_files/asdf.txt";
-            String filePath = "test_files/UofA_Eng_logo.jpg";
+            ServerSocket serverSocket = new ServerSocket(16000);
 
-            FileInputStream fileInputStream = null;
-
-            File testFile = new File(filePath);
-            byte[] testBytes = Files.readAllBytes(testFile.toPath());
-
-            FileOutputStream fileOutputStream = new FileOutputStream(filePath + ".output");
-            fileOutputStream.write(testBytes);
-            fileOutputStream.close();
-
-            // Sending a byte array over a socket
-            // ServerSocket serverSocket = new ServerSocket(16000);
-            // Socket clientSocket = serverSocket.accept();
-            //
-            // System.out.println("Server: Client connection received");
-            //
-            // PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
-            // BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            //
-            // // writer.println("From server");
-            //
-            // System.out.println("Server: " + reader.readLine());
-            // // writer.println("From server");
-            //
-            // String inputLine = null;
-            // while ((inputLine = reader.readLine()) != null) {
-            //     System.out.println("Server: " + inputLine);
-            //
-            //     writer.println("Message received: " + inputLine);
-            // }
+            Socket clientSocket = null;
+            while (true) {
+                clientSocket = serverSocket.accept();
+                ServerThread serverThread = new ServerThread(clientSocket);
+                serverThread.start();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
