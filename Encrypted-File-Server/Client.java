@@ -103,7 +103,8 @@ public class Client {
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
             // TODO: Remove; test
-            long[] tempKey = new long[]{0, 1, 2, 3};
+            // long[] key = new long[]{0, 1, 2, 3};
+            long[] key = loginCredentials.getKey();
 
             sendEncryptedBytesWithoutFlag(dataOutputStream, teaLibrary, loginCredentials.getUserId().getBytes(), loginCredentials.getKey());
 
@@ -115,19 +116,19 @@ public class Client {
             while ((userInput = userReader.readLine()) != null) {
                 if (userInput.equals("|EXIT")) {
                     String finishedString = new String("FINISHED");
-                    sendEncryptedBytes(dataOutputStream, teaLibrary, finishedString.getBytes(), tempKey, ServerConfig.FIN);
+                    sendEncryptedBytes(dataOutputStream, teaLibrary, finishedString.getBytes(), key, ServerConfig.FIN);
 
                     return;
                 } else {
-                    sendEncryptedBytes(dataOutputStream, teaLibrary, userInput.getBytes(), tempKey, ServerConfig.FILENAME);
+                    sendEncryptedBytes(dataOutputStream, teaLibrary, userInput.getBytes(), key, ServerConfig.FILENAME);
 
-                    long[] decryptedLongArray = readLongArray(dataInputStream, teaLibrary, tempKey);
+                    long[] decryptedLongArray = readLongArray(dataInputStream, teaLibrary, key);
                     if (decryptedLongArray[0] == ServerConfig.FNF) {
                         System.err.println("ERROR: File not found");
                     } else if (decryptedLongArray[0] == ServerConfig.ACK) {
                         System.out.println("Acknowledgement recieved");
 
-                        long[] decryptedFileContents = readLongArray(dataInputStream, teaLibrary, tempKey);
+                        long[] decryptedFileContents = readLongArray(dataInputStream, teaLibrary, key);
                         byte[] fileContents = longArrayToByteArray(decryptedFileContents);
 
                         FileOutputStream fileOutputStream = new FileOutputStream(userInput + ".client.output");

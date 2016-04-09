@@ -138,7 +138,7 @@ public class ServerThread extends Thread {
         System.loadLibrary("tea");
 
         // TODO: Add proper credential selection
-        long[] tempKey = new long[]{0, 1, 2, 3};
+        // long[] key = new long[]{0, 1, 2, 3};
 
         System.out.println("[Server] Client connection received");
 
@@ -148,12 +148,7 @@ public class ServerThread extends Thread {
             DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
 
-            // TODO: Retrieve encrypted user id
-            // long[] userIdLongArray = readEncryptedLongArray(dataInputStream, teaLibrary, tempKey);
-            // byte[] userIdByteArray = longArrayToByteArray(userIdLongArray);
-            // String userId = new String(userIdByteArray, Charset.forName("UTF-8"));
-            // System.out.println("[Server] User id: " + userId);
-
+            // Retrieve encrypted user id and find credentials
             long[] encryptedUserIdLongArray = readLongArray(dataInputStream);
             LoginPair loginPair = ServerConfig.getInstance().getCredentialsByEncryptedUserId(encryptedUserIdLongArray);
 
@@ -161,6 +156,8 @@ public class ServerThread extends Thread {
                 System.err.println("[Server] ERROR: Login credentials could not be retrieved");
                 return;
             }
+
+            long[] key = loginPair.getKey();
 
             // TODO: Remove; test
             System.out.println("[Server] Processed credentials: userid: " + loginPair.getUserId() + ", key: " + Arrays.toString(loginPair.getKey()));
@@ -176,7 +173,7 @@ public class ServerThread extends Thread {
                     }
 
                     // Decrypt contents
-                    long[] decryptedLongArray = teaLibrary.decrypt(tempLongArray, tempKey);
+                    long[] decryptedLongArray = teaLibrary.decrypt(tempLongArray, key);
 
                     long messageType = decryptedLongArray[0];
                     if (messageType == ServerConfig.FILENAME) {
@@ -194,13 +191,13 @@ public class ServerThread extends Thread {
 
                 File file = new File(inputLine);
                 if (file.exists()) {
-                    sendAckMessage(dataOutputStream, teaLibrary, tempKey, serverConfig);
+                    sendAckMessage(dataOutputStream, teaLibrary, key, serverConfig);
 
                     byte[] byteArray = Files.readAllBytes(file.toPath());
 
-                    sendEncryptedBytesWithoutFlag(dataOutputStream, teaLibrary, byteArray, tempKey);
+                    sendEncryptedBytesWithoutFlag(dataOutputStream, teaLibrary, byteArray, key);
                 } else {
-                    sendFileNotFoundMessage(dataOutputStream, teaLibrary, tempKey, serverConfig);
+                    sendFileNotFoundMessage(dataOutputStream, teaLibrary, key, serverConfig);
                 }
             }
         } catch(EOFException e) {
