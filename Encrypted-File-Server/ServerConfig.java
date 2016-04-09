@@ -32,6 +32,7 @@ public class ServerConfig {
         if (messagePresets == null) {
             messagePresets = new HashMap<Long, String>();
             messagePresets.put(FNF, "File not found");
+            messagePresets.put(ACK, "Acknowledged");
         }
 
         return messagePresets;
@@ -97,20 +98,8 @@ public class ServerConfig {
 
         String toAdd = newUserId + ":" + Arrays.toString(newKey);
 
-        // TODO: Remove; test
-        System.out.println("Adding: " + toAdd);
-
         // Append to file if it exists
         try {
-            // File file = new File(filename);
-            // if (file.exists()) {
-            //     PrintWriter printWriter = new PrintWriter();
-            //     printWriter.println(toAdd);
-            // } else {
-            //     PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(filename, false)));
-            //     printWriter.println(toAdd);
-            // }
-
             File file = new File(filename);
 
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename, true));
@@ -136,10 +125,6 @@ public class ServerConfig {
 
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
-
-                // TODO: Remove; test
-                System.out.println(line);
-
                 String[] strings = line.split(":");
                 strings[1] = strings[1].replace("[", "");
                 strings[1] = strings[1].replace("]", "");
@@ -150,7 +135,6 @@ public class ServerConfig {
                 long[] nextKey = new long[4];
                 for (int i = 0; i < 4; ++i) {
                     nextKey[i] = Long.parseLong(longStrings[i]);
-                    System.out.println("Next key value: " + nextKey[i]);
                 }
 
                 long[] decryptedUserId = teaLibrary.decrypt(encryptedUserId, nextKey);
@@ -160,14 +144,22 @@ public class ServerConfig {
                     decryptedUserIdByteArray[i] = (byte) decryptedUserId[i];
                 }
 
-                String decryptedUserIdString = new String(decryptedUserIdByteArray, Charset.forName("UTF-8"));
+                byte[] nextIdBytes = strings[0].getBytes();
 
-                // TODO: Remove; test
-                System.out.println("Decrypted user id: " + decryptedUserIdString);
+                if (decryptedUserIdByteArray.length > 0) {
+                    boolean areIdsEqual = true;
+                    for (int i = 0; i < decryptedUserIdByteArray.length; ++i) {
+                        if (decryptedUserId[i] != nextIdBytes[i]) {
+                            areIdsEqual = false;
+                            break;
+                        }
+                    }
 
-                if (strings[0].equals(decryptedUserIdString)) {
-                    LoginPair loginPair = new LoginPair(decryptedUserIdString, nextKey);
-                    return loginPair;
+                    if (areIdsEqual) {
+                        String decryptedUserIdString = new String(decryptedUserIdByteArray, Charset.forName("UTF-8"));
+                        LoginPair loginPair = new LoginPair(decryptedUserIdString, nextKey);
+                        return loginPair;
+                    }
                 }
             }
         } catch (Exception e) {

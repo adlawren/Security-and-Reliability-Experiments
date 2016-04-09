@@ -31,6 +31,29 @@ public class Client {
         }
     }
 
+    private static void sendEncryptedBytesWithoutFlag(DataOutputStream dataOutputStream,
+                                        TEALibrary teaLibrary,
+                                        byte[] bytes,
+                                        long[] key) {
+        assert key.length == 4;
+
+        long[] longArray = new long[ bytes.length ];
+        for (int i = 0; i < longArray.length; ++i) {
+            longArray[i] = (long) bytes[i];
+        }
+
+        long[] encryptedLongArray = teaLibrary.encrypt(longArray, key);
+
+        try {
+            dataOutputStream.writeInt(encryptedLongArray.length);
+            for (int i = 0; i < encryptedLongArray.length; ++i) {
+                dataOutputStream.writeLong(encryptedLongArray[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static long[] readLongArray(DataInputStream dataInputStream, TEALibrary teaLibrary, long[] key) {
         long[] decryptedLongArray = null;
 
@@ -82,8 +105,9 @@ public class Client {
             // TODO: Remove; test
             long[] tempKey = new long[]{0, 1, 2, 3};
 
-            BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
+            sendEncryptedBytesWithoutFlag(dataOutputStream, teaLibrary, loginCredentials.getUserId().getBytes(), loginCredentials.getKey());
 
+            BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Provide the name of a file to retrieve:");
 
             // Get user input
@@ -100,8 +124,11 @@ public class Client {
                     long[] decryptedLongArray = readLongArray(dataInputStream, teaLibrary, tempKey);
                     if (decryptedLongArray[0] == ServerConfig.FNF) {
                         System.err.println("ERROR: File not found");
-                    } else {
-                        byte[] fileContents = longArrayToByteArray(decryptedLongArray);
+                    } else if (decryptedLongArray[0] == ServerConfig.ACK) {
+                        System.out.println("Acknowledgement recieved");
+
+                        long[] decryptedFileContents = readLongArray(dataInputStream, teaLibrary, tempKey);
+                        byte[] fileContents = longArrayToByteArray(decryptedFileContents);
 
                         FileOutputStream fileOutputStream = new FileOutputStream(userInput + ".client.output");
                         fileOutputStream.write(fileContents);
