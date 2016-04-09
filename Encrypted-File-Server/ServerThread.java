@@ -14,8 +14,10 @@ public class ServerThread extends Thread {
 
     public void run() {
 
+        // LoginPair loginPair = ServerConfig.getInstance().getCredentialsByEncryptedUserId(new long[4]);
+
         // Load server settings
-        ServerConfig serverConfig = new ServerConfig();
+        ServerConfig serverConfig = ServerConfig.getInstance(); // new ServerConfig();
 
         // Load encryption library
         TEALibrary teaLibrary = new TEALibrary();

@@ -5,30 +5,84 @@ import java.util.*;
 
 public class Client {
 
-    private static int clientCount = 0;
+    // TODO: Rework parameters
+    private static void sendEncryptedBytes(DataOutputStream dataOutputStream,
+                                        TEALibrary teaLibrary,
+                                        byte[] bytes,
+                                        long[] key,
+                                        long code) {
+        assert key.length == 4;
+
+        long[] longArray = new long[ bytes.length + 1 ];
+        longArray[0] = code;
+        for (int i = 1; i < longArray.length; ++i) {
+            longArray[i] = (long) bytes[i - 1];
+        }
+
+        long[] encryptedLongArray = teaLibrary.encrypt(longArray, key);
+
+        try {
+            dataOutputStream.writeInt(encryptedLongArray.length);
+            for (int i = 0; i < encryptedLongArray.length; ++i) {
+                dataOutputStream.writeLong(encryptedLongArray[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static long[] readLongArray(DataInputStream dataInputStream, TEALibrary teaLibrary, long[] key) {
+        long[] decryptedLongArray = null;
+
+        try {
+            int length = dataInputStream.readInt();
+            if (length > 0) {
+                long[] tempLongArray = new long[length];
+                for (int i = 0; i < length; ++i) {
+                    tempLongArray[i] = dataInputStream.readLong();
+                }
+
+                // Decrypt contents
+                decryptedLongArray = teaLibrary.decrypt(tempLongArray, key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return decryptedLongArray;
+    }
+
+    private static byte[] longArrayToByteArray(long[] longArray) {
+        byte[] byteArray = new byte[ longArray.length ];
+        for (int i = 0; i < byteArray.length; ++i) {
+            byteArray[i] = (byte) longArray[i];
+        }
+
+        return byteArray;
+    }
 
     public static void main(String args[]) {
         try {
 
-            // Load server configuration
-            ServerConfig serverConfig = new ServerConfig();
+            // Obtain login credentials
+            LoginPair loginCredentials = ServerConfig.getInstance().getCredentialsByClientId();
+
+            // TODO: Remove; test
+            System.out.println("Login Credentials: User id: " + loginCredentials.getUserId() + ", key: " + Arrays.toString(loginCredentials.getKey()));
 
             // Load encryption library
             TEALibrary teaLibrary = new TEALibrary();
             System.loadLibrary("tea");
 
-            // Obtain login credentials
-            LoginPair loginCredentials = serverConfig.getCredentialsByClientId(clientCount++);
-
-            // TODO: Remove; test
-            System.out.println("Login Credentials: User id: " + loginCredentials.getUserId() + ", key: " + Arrays.toString(loginCredentials.getKey()));
+            // Initialize streams
+            Socket socket = new Socket("127.0.0.1", 16000);
+            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
             // TODO: Remove; test
             long[] tempKey = new long[]{0, 1, 2, 3};
 
             BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
-
-            Socket socket = new Socket("127.0.0.1", 16000);
 
             System.out.println("Provide the name of a file to retrieve:");
 
@@ -37,68 +91,23 @@ public class Client {
             while ((userInput = userReader.readLine()) != null) {
                 if (userInput.equals("|EXIT")) {
                     String finishedString = new String("FINISHED");
-                    byte[] usetInputBytes = finishedString.getBytes();
-
-                    long[] userInputLongArray = new long[ usetInputBytes.length + 1 ];
-                    userInputLongArray[0] = ServerConfig.FIN;
-                    for (int i = 1; i < userInputLongArray.length; ++i) {
-                        userInputLongArray[i] = (long) usetInputBytes[i - 1];
-                    }
-
-                    long[] encryptedUserInputLongArray = teaLibrary.encrypt(userInputLongArray, tempKey);
-
-                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                    dataOutputStream.writeInt(encryptedUserInputLongArray.length);
-                    for (int i = 0; i < encryptedUserInputLongArray.length; ++i) {
-                        dataOutputStream.writeLong(encryptedUserInputLongArray[i]);
-                    }
+                    sendEncryptedBytes(dataOutputStream, teaLibrary, finishedString.getBytes(), tempKey, ServerConfig.FIN);
 
                     return;
                 } else {
-                    byte[] usetInputBytes = userInput.getBytes();
+                    sendEncryptedBytes(dataOutputStream, teaLibrary, userInput.getBytes(), tempKey, ServerConfig.FILENAME);
 
-                    long[] userInputLongArray = new long[ usetInputBytes.length + 1 ];
-                    userInputLongArray[0] = ServerConfig.FILENAME;
-                    for (int i = 1; i < userInputLongArray.length; ++i) {
-                        userInputLongArray[i] = (long) usetInputBytes[i - 1];
-                    }
+                    long[] decryptedLongArray = readLongArray(dataInputStream, teaLibrary, tempKey);
+                    if (decryptedLongArray[0] == ServerConfig.FNF) {
+                        System.err.println("ERROR: File not found");
+                    } else {
+                        byte[] fileContents = longArrayToByteArray(decryptedLongArray);
 
-                    long[] encryptedUserInputLongArray = teaLibrary.encrypt(userInputLongArray, tempKey);
+                        FileOutputStream fileOutputStream = new FileOutputStream(userInput + ".client.output");
+                        fileOutputStream.write(fileContents);
+                        fileOutputStream.close();
 
-                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                    dataOutputStream.writeInt(encryptedUserInputLongArray.length);
-                    for (int i = 0; i < encryptedUserInputLongArray.length; ++i) {
-                        dataOutputStream.writeLong(encryptedUserInputLongArray[i]);
-                    }
-
-                    // Read byte array over the socket
-                    DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                    int length = dataInputStream.readInt();
-                    byte[] fileContents = null;
-
-                    if (length > 0) {
-                        long[] tempLongArray = new long[length];
-                        for (int i = 0; i < length; ++i) {
-                            tempLongArray[i] = dataInputStream.readLong();
-                        }
-
-                        // Decrypt contents
-                        long[] decryptedLongArray = teaLibrary.decrypt(tempLongArray, tempKey);
-
-                        if (decryptedLongArray[0] == ServerConfig.FNF) {
-                            System.err.println("ERROR: File not found");
-                        } else {
-                            fileContents = new byte[ decryptedLongArray.length ];
-                            for (int i = 0; i < decryptedLongArray.length; ++i) {
-                                fileContents[i] = (byte) decryptedLongArray[i];
-                            }
-
-                            FileOutputStream fileOutputStream = new FileOutputStream(userInput + ".client.output");
-                            fileOutputStream.write(fileContents);
-                            fileOutputStream.close();
-
-                            System.out.println("File found; contents written to: " + userInput + ".client.output");
-                        }
+                        System.out.println("File found; contents written to: " + userInput + ".client.output");
                     }
 
                     System.out.println("Provide the name of a file to retrieve:");
