@@ -6,10 +6,7 @@ import java.util.*;
 
 public class ServerConfig {
 
-    private ServerConfig() {
-
-        // ...
-    }
+    private ServerConfig() {}
 
     private static ServerConfig instance = new ServerConfig();
 
@@ -24,6 +21,8 @@ public class ServerConfig {
     public static final long FIN = 2;
     public static final long FILENAME = 3;
     public static final long FILE_CONTENTS = 4;
+    public static final long ACCESS_GRANTED = 5;
+    public static final long ACCESS_DENIED = 6;
 
     // Preset messages used during communication
     private HashMap<Long, String> messagePresets = null;
@@ -33,6 +32,8 @@ public class ServerConfig {
             messagePresets = new HashMap<Long, String>();
             messagePresets.put(FNF, "File not found");
             messagePresets.put(ACK, "Acknowledged");
+            messagePresets.put(ACCESS_GRANTED, "Access granted");
+            messagePresets.put(ACCESS_DENIED, "Access denied");
         }
 
         return messagePresets;
@@ -41,52 +42,7 @@ public class ServerConfig {
     // Filename
     private static final String filename = "server.keys";
 
-    // Client ids associated with pre-distributed keys
-    private HashMap<String, long[]> keys = null;
-
-    public HashMap<String, long[]> getLoginInfo() {
-        if (keys == null) {
-            keys = new HashMap<String, long[]>();
-            keys.put("Client1", new long[]{0, 0, 0, 0});
-            keys.put("Client2", new long[]{1, 0, 0, 0});
-            keys.put("Client3", new long[]{2, 0, 0, 0});
-            keys.put("Client4", new long[]{3, 0, 0, 0});
-            keys.put("Client5", new long[]{4, 0, 0, 0});
-            keys.put("Client6", new long[]{5, 0, 0, 0});
-            keys.put("Client7", new long[]{6, 0, 0, 0});
-            keys.put("Client8", new long[]{7, 0, 0, 0});
-            keys.put("Client9", new long[]{8, 0, 0, 0});
-            keys.put("Client10", new long[]{9, 0, 0, 0});
-        }
-
-        return keys;
-    }
-
-    private static int clientCount = 0;
-
     public LoginPair getCredentialsByClientId() {
-
-        // System.out.println("Client count: " + clientCount);
-        //
-        // // Get user id
-        // ServerConfig serverConfig = new ServerConfig();
-        // HashMap<String, long[]> keys = serverConfig.getLoginInfo();
-        //
-        // Iterator<Map.Entry<String, long[]>> it = keys.entrySet().iterator();
-        //
-        // Map.Entry<String, long[]> entry = null;
-        // int i = 0;
-        // while (it.hasNext()) {
-        //     entry = it.next();
-        //     if (i == clientCount) {
-        //         break;
-        //     }
-        //
-        //     ++i;
-        // }
-        //
-        // clientCount++;
-
         String newUserId = UUID.randomUUID().toString();
 
         long[] newKey = new long[4];

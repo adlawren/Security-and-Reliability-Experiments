@@ -5,7 +5,6 @@ import java.util.*;
 
 public class Client {
 
-    // TODO: Rework parameters
     private static void sendEncryptedBytes(DataOutputStream dataOutputStream,
                                         TEALibrary teaLibrary,
                                         byte[] bytes,
@@ -104,8 +103,8 @@ public class Client {
 
             // Wait for ACK
             long[] decryptedLongArrayAckResponse = readLongArray(dataInputStream, teaLibrary, key);
-            if (decryptedLongArrayAckResponse[0] == ServerConfig.ACK) {
-                System.out.println("Acknowledgement recieved from server");
+            if (decryptedLongArrayAckResponse[0] == ServerConfig.ACCESS_GRANTED) {
+                System.out.println("Access granted message recieved from server");
             } else {
                 System.err.println("ERROR: ACK not recieved from server");
                 return;

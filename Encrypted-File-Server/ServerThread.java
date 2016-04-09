@@ -122,6 +122,26 @@ public class ServerThread extends Thread {
         sendEncryptedBytes(dataOutputStream, teaLibrary, byteArray, key, ServerConfig.ACK);
     }
 
+    private void sendAccessGrantedMessage(DataOutputStream dataOutputStream,
+                                        TEALibrary teaLibrary,
+                                        long[] key,
+                                        ServerConfig serverConfig) {
+        String messagePreset = serverConfig.getMessagePresets().get(ServerConfig.ACCESS_GRANTED);
+        byte[] byteArray = messagePreset.getBytes();
+
+        sendEncryptedBytes(dataOutputStream, teaLibrary, byteArray, key, ServerConfig.ACCESS_GRANTED);
+    }
+
+    private void sendAccessDeniedMessage(DataOutputStream dataOutputStream,
+                                        TEALibrary teaLibrary,
+                                        long[] key,
+                                        ServerConfig serverConfig) {
+        String messagePreset = serverConfig.getMessagePresets().get(ServerConfig.ACCESS_DENIED);
+        byte[] byteArray = messagePreset.getBytes();
+
+        sendEncryptedBytes(dataOutputStream, teaLibrary, byteArray, key, ServerConfig.ACCESS_DENIED);
+    }
+
     private Socket clientSocket = null;
 
     public ServerThread(Socket initalClientSocket) {
@@ -149,14 +169,18 @@ public class ServerThread extends Thread {
             long[] encryptedUserIdLongArray = readLongArray(dataInputStream);
             LoginPair loginPair = ServerConfig.getInstance().getCredentialsByEncryptedUserId(encryptedUserIdLongArray);
 
+            long[] key = null;
             if (loginPair == null) {
                 System.err.println("[Server] ERROR: Login credentials could not be retrieved");
+
+                // TODO: Resolve issue; no key was found; what key should be used?
+                sendAccessDeniedMessage(dataOutputStream, teaLibrary, new long[]{0, 1, 2, 3}, serverConfig);
+
                 return;
+            } else {
+                key = loginPair.getKey();
+                sendAccessGrantedMessage(dataOutputStream, teaLibrary, key, serverConfig);
             }
-
-            long[] key = loginPair.getKey();
-
-            sendAckMessage(dataOutputStream, teaLibrary, key, serverConfig);
 
             Integer length = null;
             while ((length = dataInputStream.readInt()) != null) {
