@@ -89,9 +89,7 @@ public class Client {
 
             // Obtain login credentials
             LoginPair loginCredentials = ServerConfig.getInstance().getCredentialsByClientId();
-
-            // TODO: Remove; test
-            System.out.println("Login Credentials: User id: " + loginCredentials.getUserId() + ", key: " + Arrays.toString(loginCredentials.getKey()));
+            long[] key = loginCredentials.getKey();
 
             // Load encryption library
             TEALibrary teaLibrary = new TEALibrary();
@@ -102,11 +100,16 @@ public class Client {
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
-            // TODO: Remove; test
-            // long[] key = new long[]{0, 1, 2, 3};
-            long[] key = loginCredentials.getKey();
-
             sendEncryptedBytesWithoutFlag(dataOutputStream, teaLibrary, loginCredentials.getUserId().getBytes(), loginCredentials.getKey());
+
+            // Wait for ACK
+            long[] decryptedLongArrayAckResponse = readLongArray(dataInputStream, teaLibrary, key);
+            if (decryptedLongArrayAckResponse[0] == ServerConfig.ACK) {
+                System.out.println("Acknowledgement recieved from server");
+            } else {
+                System.err.println("ERROR: ACK not recieved from server");
+                return;
+            }
 
             BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Provide the name of a file to retrieve:");
@@ -126,7 +129,7 @@ public class Client {
                     if (decryptedLongArray[0] == ServerConfig.FNF) {
                         System.err.println("ERROR: File not found");
                     } else if (decryptedLongArray[0] == ServerConfig.ACK) {
-                        System.out.println("Acknowledgement recieved");
+                        System.out.println("Acknowledgement recieved from server");
 
                         long[] decryptedFileContents = readLongArray(dataInputStream, teaLibrary, key);
                         byte[] fileContents = longArrayToByteArray(decryptedFileContents);

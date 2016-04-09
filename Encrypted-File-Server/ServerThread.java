@@ -137,9 +137,6 @@ public class ServerThread extends Thread {
         TEALibrary teaLibrary = new TEALibrary();
         System.loadLibrary("tea");
 
-        // TODO: Add proper credential selection
-        // long[] key = new long[]{0, 1, 2, 3};
-
         System.out.println("[Server] Client connection received");
 
         try {
@@ -159,8 +156,7 @@ public class ServerThread extends Thread {
 
             long[] key = loginPair.getKey();
 
-            // TODO: Remove; test
-            System.out.println("[Server] Processed credentials: userid: " + loginPair.getUserId() + ", key: " + Arrays.toString(loginPair.getKey()));
+            sendAckMessage(dataOutputStream, teaLibrary, key, serverConfig);
 
             Integer length = null;
             while ((length = dataInputStream.readInt()) != null) {
