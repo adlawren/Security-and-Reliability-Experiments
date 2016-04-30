@@ -1,3 +1,5 @@
 *.so
 *.class
 *~
+Encrypted-File-Server/test_files/
+*.old
